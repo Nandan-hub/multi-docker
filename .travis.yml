@@ -9,10 +9,10 @@ script:
   - docker run dockernandan/react-test npm test -- --coverage
 
 after_success:
-  - docker build -t dockernandan/multi-client ./client
   - docker build -t dockernandan/multi-nginx ./nginx
   - docker build -t dockernandan/multi-server ./server
   - docker build -t dockernandan/multi-worker ./worker
+  - docker build -t dockernandan/multi-client ./client  
   # login to the docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   # Take all the images and push them to docker hub
