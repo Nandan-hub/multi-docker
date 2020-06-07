@@ -1,0 +1,23 @@
+sudo: required
+services:
+  - docker
+
+
+before_install:
+  - docker build -t dockernandan/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run dockernandan/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t dockernandan/multi-client ./client
+  - docker build -t dockernandan/multi-nginx ./nginx
+  - docker build -t dockernandan/multi-server ./server
+  - docker build -t dockernandan/multi-worker ./worker
+  # login to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take all the images and push them to docker hub
+  - docker push dockernandan/multi-client
+  - docker push dockernandan/multi-nginx
+  - docker push dockernandan/multi-server
+  - docker push dockernandan/multi-worker
